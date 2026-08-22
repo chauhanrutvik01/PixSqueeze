@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { AnalyticsSettingsButton } from "./GoogleAnalytics";
 import { sizeSlugs, toolLinks } from "@/lib/site";
 
 export function Footer() {
@@ -21,6 +22,7 @@ export function Footer() {
           <div className="mt-4 grid gap-2 text-sm text-slate-600">
             {toolLinks.slice(0, 3).map((tool) => <Link className="hover:text-moss" key={tool.href} href={tool.href}>{tool.label}</Link>)}
             <Link className="hover:text-moss" href="/privacy-policy">Privacy policy</Link>
+            <AnalyticsSettingsButton />
             <Link className="hover:text-moss" href="/terms-of-use">Terms of use</Link>
             <Link className="hover:text-moss" href="/contact">Contact</Link>
           </div>

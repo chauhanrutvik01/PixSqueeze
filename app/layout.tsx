@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -23,8 +24,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${manrope.variable} ${fraunces.variable}`}>
       <body>
-        {/* Google Analytics hook: add the approved Script tags here after choosing a consent configuration. */}
         <Header /><main>{children}</main><Footer />
+        <GoogleAnalytics />
       </body>
     </html>
   );
