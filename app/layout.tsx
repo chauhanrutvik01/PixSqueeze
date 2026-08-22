@@ -15,7 +15,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: { type: "website", siteName: site.name, title: "PixSqueeze Image Compressor", description: site.description, url: site.url },
   twitter: { card: "summary_large_image" },
-  verification: { google: "ADD_SEARCH_CONSOLE_VERIFICATION_CODE" },
 };
 
 export const viewport: Viewport = { themeColor: "#fbfaf5", width: "device-width", initialScale: 1 };

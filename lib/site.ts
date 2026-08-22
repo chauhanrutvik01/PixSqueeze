@@ -1,7 +1,7 @@
 export const site = {
   name: "PixSqueeze",
-  url: "https://pixsqueeze.com",
-  email: "hello@pixsqueeze.com",
+  url: "https://pixsqueeze.me",
+  email: "rcshortsx@gmail.com",
   description: "Private, browser-based tools for compressing, resizing and converting images.",
 };
 
