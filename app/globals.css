@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --ink: #13241e;
+  --moss: #25634f;
+  --cream: #fbfaf5;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(166, 224, 190, .34), transparent 25rem),
+    radial-gradient(circle at 95% 18%, rgba(244, 123, 95, .10), transparent 23rem),
+    var(--cream);
+  font-family: var(--font-manrope), system-ui, sans-serif;
+}
+
+::selection { background: #bce9ce; color: #13241e; }
+a { text-underline-offset: 3px; }
+button, input, select { font: inherit; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid rgba(37, 99, 79, .28);
+  outline-offset: 3px;
+}
+
+.container-shell { @apply mx-auto w-full max-w-6xl px-5 sm:px-7 lg:px-8; }
+.eyebrow { @apply text-xs font-extrabold uppercase tracking-[0.2em] text-moss; }
+.display { @apply font-display font-semibold tracking-[-0.035em] text-ink; }
+.surface { @apply rounded-[1.75rem] border border-line bg-white shadow-soft; }
+.prose-pix h2 { @apply mt-10 font-display text-3xl font-semibold tracking-tight text-ink; }
+.prose-pix h3 { @apply mt-7 text-xl font-bold text-ink; }
+.prose-pix p { @apply mt-4 leading-8 text-slate-600; }
+.prose-pix ul, .prose-pix ol { @apply mt-4 space-y-2 pl-6 leading-7 text-slate-600; }
+.prose-pix ul { @apply list-disc; }
+.prose-pix ol { @apply list-decimal; }
+.prose-pix a { @apply font-semibold text-moss underline decoration-mint decoration-4; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}

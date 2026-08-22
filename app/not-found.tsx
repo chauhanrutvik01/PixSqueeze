@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function NotFound(){return <section className="container-shell py-24 text-center"><p className="font-display text-8xl font-semibold text-mint">404</p><h1 className="display -mt-4 text-4xl">That page was squeezed out.</h1><p className="mt-4 text-slate-600">The address may be incomplete or the page may have moved.</p><Link className="mt-7 inline-block rounded-full bg-ink px-6 py-3 font-bold text-white" href="/">Return home</Link></section>}
