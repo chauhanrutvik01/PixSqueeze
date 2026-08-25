@@ -11,7 +11,30 @@ export type SizePage = {
   faqs: { question: string; answer: string }[];
 };
 
-export const sizePages: SizePage[] = [
+export const targetSizeFaqs = [
+  {
+    question: "Does compressing reduce image quality?",
+    answer: "Compression can reduce visible quality when the target is much smaller than the source. PixSqueeze searches for the highest practical quality below your limit and reduces pixel dimensions only when needed.",
+  },
+  {
+    question: "Is this tool free and unlimited?",
+    answer: "Yes. PixSqueeze is free and has no account, watermark or daily server quota. Practical batch limits depend on your browser and available device memory because processing happens locally.",
+  },
+  {
+    question: "Do I need to create an account?",
+    answer: "No. You can add, compress and download images without signing up or providing personal details.",
+  },
+  {
+    question: "Which image formats are supported?",
+    answer: "PixSqueeze accepts JPG and JPEG, PNG, WebP, HEIC and HEIF images. Compressed results can be downloaded as JPG, PNG or WebP.",
+  },
+  {
+    question: "Are my images uploaded to a server?",
+    answer: "No. Your images are decoded and compressed on your device using browser APIs. PixSqueeze has no image-upload server and cannot view or store the files you select.",
+  },
+] as const;
+
+const baseSizePages: SizePage[] = [
   { slug:"5kb",label:"5KB",kb:5,title:"Compress Image to 5KB Online Free — Tiny & Precise",description:"Compress an image to 5KB online for free. Create an ultra-small photo in your browser with no upload, account or watermark.",intro:"A 5KB image is exceptionally compact. It is most useful when an older form, lightweight directory, thumbnail slot or low-bandwidth system sets a very strict upload ceiling. PixSqueeze gradually adjusts image quality and pixel dimensions to find a result below that limit while keeping the subject recognizable.",common:"At this size, a full-resolution photograph cannot retain fine texture. Simple headshots, signatures, icons and graphics with uncluttered backgrounds respond best. Crop away empty space before compressing and start with an image whose subject already fills the frame.",strategy:"Expect visible simplification at 5KB. The compressor may reduce dimensions as well as encoding quality because lowering quality alone is rarely enough. For a document photo, check that facial features and edges remain legible at the size the receiving portal displays.",check:"After downloading, confirm the file is 5KB or less in your device’s file details, then preview it once more before submitting. Different operating systems round displayed sizes differently, so PixSqueeze targets bytes rather than a rounded label.",faqs:[{question:"Can a photo really be compressed to 5KB?",answer:"Yes, although the image will need small pixel dimensions and strong compression. A tightly cropped, simple photo gives the clearest result."},{question:"Will my original image be changed?",answer:"No. PixSqueeze creates a new downloadable file and leaves the original untouched on your device."},{question:"Why is my result smaller than exactly 5KB?",answer:"The tool stays under the limit. Image encoders produce discrete file sizes, so the nearest safe result may be slightly below 5KB."}]},
   { slug:"10kb",label:"10KB",kb:10,title:"Compress Image to 10KB Online — Free Photo Reducer",description:"Reduce image size to 10KB online with a private browser-based compressor. Fast, free and designed for strict photo upload limits.",intro:"A 10KB limit often appears in compact profile systems, signature uploads and legacy application forms. It leaves a little more room than 5KB, but successful results still depend on a clear crop and modest pixel dimensions. This page begins with 10KB already selected so you can move directly from choosing a file to downloading it.",common:"Scanned signatures, small ID portraits and simple supporting graphics are good candidates. If a portal gives both a pixel specification and a file-size ceiling, resize to the required dimensions first, then use this compressor for the final file-weight adjustment.",strategy:"PixSqueeze tries several encoding-quality levels and reduces dimensions only when needed. A plain background and even lighting compress more efficiently than noisy shadows, patterned walls or a photo of a printed photo.",check:"Open the result at its intended display size, not only zoomed in. A 10KB portrait can look rough at full-screen magnification yet remain perfectly serviceable inside a small application preview. Always keep the original in case the portal later requests a larger copy.",faqs:[{question:"How do I reduce a JPG to 10KB?",answer:"Add the JPG, keep the target at 10KB, choose Compress images, and download the new file after processing."},{question:"Does 10KB mean 10,000 bytes?",answer:"Most upload tools use binary kilobytes. PixSqueeze treats 10KB as 10 × 1,024 bytes and aims at or below that amount."},{question:"Are 10KB photos uploaded to PixSqueeze?",answer:"No. Processing happens inside your browser; your selected images are not transferred to our server."}]},
   { slug:"20kb",label:"20KB",kb:20,title:"Compress Image to 20KB Online Free — Quick & Private",description:"Compress a JPG, PNG, WebP or HEIC image to 20KB online. No server upload, signup or watermark—just a fast 20KB photo reducer.",intro:"Twenty kilobytes is a common low-end target for profile pictures, scanned signatures and small application photographs. It can preserve a recognizable portrait when the image is tightly framed, making it a practical compromise between a demanding upload rule and readable visual detail.",common:"Forms for exams, permits and recruitment may specify a range rather than an exact value—for example, 10KB to 20KB. This tool aims below 20KB. If the portal also has a minimum, inspect the downloaded size and use a slightly higher target if necessary.",strategy:"The compressor tests the image at multiple quality settings, keeping the largest valid candidate under your target. If quality changes are insufficient, it carefully scales the image down. Starting from a clean digital image generally produces a better 20KB file than compressing a screenshot or a previously compressed social-media copy.",check:"Check three things before upload: the file size, the accepted format and any pixel-dimension rule. They are separate requirements. A file can be under 20KB and still be rejected for having the wrong dimensions or extension.",faqs:[{question:"Is this 20KB compressor free?",answer:"Yes. There is no sign-up, watermark or usage charge for processing images in your browser."},{question:"Can I compress a PNG to 20KB?",answer:"Yes. For strong reductions, a PNG may be encoded as WebP to preserve transparency more efficiently."},{question:"Can I process several 20KB photos?",answer:"Yes. Add multiple images, run one batch, then download each finished result."}]},
@@ -25,5 +48,73 @@ export const sizePages: SizePage[] = [
   { slug:"1mb",label:"1MB",kb:1024,title:"Compress Image to 1MB Online Free — High Quality",description:"Compress an image to 1MB online without uploading it. Free high-quality reduction for large photos, portals and sharing.",intro:"A one-megabyte image is a practical high-quality limit for uploads, email and online portfolios. It usually retains plenty of detail while being far easier to transfer than an untouched multi-megabyte phone or camera file.",common:"Choose 1MB when a service rejects large originals but the image still needs to support a generous on-screen view. It is also useful for preparing a consistent batch before sharing, particularly when recipients may be using limited storage or mobile data.",strategy:"Because the target is roomy, the compressor prioritizes dimensions and applies only as much quality reduction as needed. Images already below 1MB pass through untouched. This avoids the subtle degradation that can accumulate each time a lossy image is re-encoded.",check:"Remember that some portals display MB using decimal units while others use binary units. PixSqueeze treats 1MB as 1,024KB and remains at or below that byte budget. If a particularly strict service disagrees, target 990KB for extra margin.",faqs:[{question:"How many KB are in the 1MB target?",answer:"PixSqueeze uses 1,024KB for one megabyte, matching common binary file-size reporting."},{question:"Can I compress a phone photo to 1MB?",answer:"Yes. Large phone photos are ideal candidates and normally retain strong visual quality at this limit."},{question:"Will files under 1MB be compressed again?",answer:"No. They are returned unchanged because further encoding would add no file-size benefit."}]},
   { slug:"2mb",label:"2MB",kb:2048,title:"Compress Image to 2MB Online — Free Large Photo Reducer",description:"Reduce large images to 2MB online for free. Private, high-quality browser compression for camera and phone photos.",intro:"Two megabytes is a generous upload ceiling that can preserve high resolution and fine detail. Many portals use it to prevent unbounded camera files while still accommodating clear documentation, listings, portfolios and application evidence.",common:"Current phones can create images well over 5MB, especially in complex scenes or high-resolution modes. A 2MB copy is often visually close to the original during normal screen viewing but is quicker to attach, upload and archive in a web system.",strategy:"PixSqueeze tests light compression first and only becomes more assertive when the file remains above the limit. For a large source, it may reduce excessive dimensions; for a moderately sized JPEG, a small quality adjustment may be sufficient. Every file is evaluated on its own.",check:"Use 2MB only when it matches the destination’s stated limit or your chosen performance budget. Smaller can be better for a thumbnail, while important zoomable details may deserve the full allowance. Download and inspect the new copy before removing or archiving your original.",faqs:[{question:"Can I reduce a 10MB photo to 2MB?",answer:"Yes. Most large camera images can reach 2MB with a combination of efficient encoding and, where necessary, scaled dimensions."},{question:"Does the tool work offline?",answer:"After the page and any required decoder have loaded, the core canvas processing occurs locally in your browser."},{question:"Can I select HEIC photos from an iPhone?",answer:"Yes. HEIC decoding is loaded when needed, then processing and export remain on your device."}]}
 ];
+
+const additionalSizePages: SizePage[] = [
+  {
+    slug: "15kb", label: "15KB", kb: 15, title: "Compress Image to 15KB Online Free",
+    description: "Compress an image to 15KB free with private browser processing. JPG, PNG, WebP and HEIC files are never uploaded.",
+    intro: "A 15KB ceiling sits between the extremely restrictive 10KB and more forgiving 20KB targets. It is useful for scanned signatures, compact profile pictures and older application portals where every kilobyte matters. PixSqueeze starts with encoding quality and reduces dimensions only when the source cannot otherwise fit.",
+    common: "Use 15KB when the destination states it as a maximum or gives a range ending at 15KB. A close crop, plain background and clean source preserve more recognizable detail than a noisy screenshot or repeatedly saved photo.",
+    strategy: "For portraits, remove unused background before compression. For signatures, use dark ink on an evenly lit pale background. Those choices let the encoder spend limited bytes on the subject rather than visual noise.",
+    check: "Confirm the result is at or below 15KB, then check its extension and pixel dimensions. A valid file size does not override separate format or aspect-ratio rules.",
+    faqs: [{ question: "Can a portrait remain clear at 15KB?", answer: "A tightly cropped small portrait can remain recognizable, although fine texture will be reduced at such a strict limit." }],
+  },
+  {
+    slug: "40kb", label: "40KB", kb: 40, title: "Compress Image to 40KB Online Free",
+    description: "Compress an image to 40KB free and privately. Reduce JPG, PNG, WebP or HEIC files in your browser with no upload.",
+    intro: "Forty kilobytes is a practical target for recruitment forms, exam registrations, profile systems and compact document photos. It gives a well-prepared headshot more room than ultra-small limits while remaining light enough for strict portals and slow connections.",
+    common: "A 40KB requirement may appear alongside an exact width, height or aspect ratio. Prepare those dimensions first, then compress the finished copy. Solving the two rules separately produces a more predictable upload file.",
+    strategy: "Start from a sharp photo with even light and a simple background. PixSqueeze searches for the strongest encoding below 40KB and scales the image only if quality adjustment is not enough.",
+    check: "Open the download at its expected display size and verify faces, signatures or required text remain readable. Keep the original in case a different portal asks for a larger version.",
+    faqs: [{ question: "Is 40KB suitable for an application photo?", answer: "It can be, provided the destination accepts the result’s format, dimensions and visual quality. Always follow the current portal instructions." }],
+  },
+  {
+    slug: "60kb", label: "60KB", kb: 60, title: "Compress Image to 60KB Online Free",
+    description: "Compress an image to 60KB online free. Private exact-size compression for JPG, PNG, WebP and HEIC with no upload.",
+    intro: "A 60KB image can retain a useful amount of portrait and document detail while meeting a modest portal limit. The target is common enough in application workflows to deserve a ready-to-use preset instead of repeated manual quality guesses.",
+    common: "Use the 60KB preset for online forms, profile photographs and lightweight content images that explicitly set this maximum. If the destination gives a minimum as well, inspect the result and make sure it falls inside the complete allowed range.",
+    strategy: "PixSqueeze evaluates each source independently. Smooth backgrounds and clean lighting compress efficiently; hair, fabric, foliage and camera noise need more data and may require smaller dimensions.",
+    check: "Verify the downloaded byte size, format and pixel dimensions before submitting. If a portal rounds sizes differently, use a slightly lower custom target for extra margin.",
+    faqs: [{ question: "Will the output be exactly 60KB?", answer: "The compressor chooses the closest practical result at or below 60KB, so it may be slightly smaller than the limit." }],
+  },
+  {
+    slug: "80kb", label: "80KB", kb: 80, title: "Compress Image to 80KB Online Free",
+    description: "Compress photos to 80KB free with no upload. Private JPG, PNG, WebP and HEIC compression runs in your browser.",
+    intro: "Eighty kilobytes is a useful middle ground for application photos, ID-style portraits and website thumbnails. It is small enough for responsive uploads while allowing more detail than the very strict 20KB to 50KB range.",
+    common: "An 80KB target works best after cropping and resizing to the destination’s required dimensions. Avoid spending the file budget on empty scenery or pixels that the receiving page will never display.",
+    strategy: "The compressor first searches encoding quality, then carefully lowers dimensions only when required. That order protects useful resolution whenever the source complexity allows it.",
+    check: "Compare the source and result at normal viewing size. Confirm important facial features, edges and text remain clear, and retain the untouched original separately.",
+    faqs: [{ question: "Can I compress several images to 80KB?", answer: "Yes. Add multiple supported images and PixSqueeze applies the 80KB maximum to each file in the batch." }],
+  },
+  {
+    slug: "90kb", label: "90KB", kb: 90, title: "Compress Image to 90KB Online Free",
+    description: "Compress an image to 90KB online free and private. No-upload batch compression for JPG, PNG, WebP and HEIC files.",
+    intro: "A 90KB preset is helpful when a portal sets a limit just below the familiar 100KB mark. Using the stated ceiling directly avoids accidental rejection from a result that is technically below 100KB but still above the form’s actual allowance.",
+    common: "Choose 90KB for profile systems, education portals and web uploads that specify this exact maximum. For requirements expressed as a range, confirm the finished file also stays above any stated minimum.",
+    strategy: "Begin with the cleanest available source. A previously compressed social-media copy contains artifacts that can make a second compression look worse than creating the 90KB version directly from the original.",
+    check: "Review the download, then verify its true file properties rather than relying only on a rounded thumbnail label. Check the destination’s accepted extension and dimensions too.",
+    faqs: [{ question: "Why use 90KB instead of 100KB?", answer: "A portal enforcing a 90KB ceiling can reject a file between 90KB and 100KB, so the target should match the stated rule." }],
+  },
+  {
+    slug: "250kb", label: "250KB", kb: 250, title: "Compress Image to 250KB Online Free",
+    description: "Compress an image to 250KB free with private no-upload processing. Reduce JPG, PNG, WebP and HEIC files in-browser.",
+    intro: "Two hundred fifty kilobytes gives ordinary photos and scanned supporting images a comfortable amount of detail while remaining much lighter than a multi-megabyte camera original. It is a sensible limit for uploads that need legibility without unnecessary transfer weight.",
+    common: "Use 250KB for document portals, listings, article images and email attachments that provide this ceiling. A large phone photo will usually benefit from sensible pixel dimensions as well as efficient encoding.",
+    strategy: "PixSqueeze keeps the largest safe candidate it finds below 250KB. Detailed scenes may need stronger reduction than portraits or graphics with smooth backgrounds, even when their starting dimensions match.",
+    check: "Inspect small text and important edges before submission. If the image is intended for print or close zooming, confirm that the destination’s resolution requirement is also satisfied.",
+    faqs: [{ question: "Is 250KB enough for a clear photo?", answer: "It is usually enough for a clear medium-size screen image, though quality depends on pixel dimensions and visual complexity." }],
+  },
+  {
+    slug: "400kb", label: "400KB", kb: 400, title: "Compress Image to 400KB Online Free",
+    description: "Compress photos to 400KB online free. Private JPG, PNG, WebP and HEIC compression with no server upload or signup.",
+    intro: "A 400KB target is generous enough for many detailed website, property, portfolio and supporting-document images while still reducing oversized phone and camera files substantially. It balances visible detail with quicker uploads and downloads.",
+    common: "Choose 400KB when a platform explicitly sets that limit or when you want a consistent image budget for a batch. Resize sources that are far larger than their intended display area so visitors do not download unused pixels.",
+    strategy: "At this target the compressor can often preserve substantial dimensions and rely mainly on efficient re-encoding. Already optimized WebP files may change less than high-resolution camera JPEGs.",
+    check: "Preview the result in the context where it will appear. A large zoomable image may need more resolution than a card thumbnail even when both meet the same file-size limit.",
+    faqs: [{ question: "Can I batch-compress website images to 400KB?", answer: "Yes. Each selected image is processed locally and receives its own result at or below the 400KB target when achievable." }],
+  },
+];
+
+export const sizePages: SizePage[] = [...baseSizePages, ...additionalSizePages].sort((a, b) => a.kb - b.kb);
 
 export function getSizePage(slug: string) { return sizePages.find((page) => page.slug === slug); }

@@ -1,4 +1,40 @@
 import type { Metadata } from "next";
 import { ToolPage } from "@/components/ToolPage";
-export const metadata: Metadata = { title:"Passport Photo Size Tool — Crop & Resize Online",description:"Center-crop and resize a portrait to common passport photo ratios. Private browser processing with no image upload.",alternates:{canonical:"/passport-photo-size"},openGraph:{title:"Passport Photo Size Tool",description:"Prepare a clean digital portrait crop in your browser.",url:"/passport-photo-size"} };
-export default function Page(){return <ToolPage mode="passport" eyebrow="Portrait preparation" title="Create a clean" accent="passport-size photo" description="Center-crop a portrait to a common ID-photo ratio, then download a fresh digital copy—all without sending it to a server." benefits={["Common square and 35:45 ratio presets","Centered crop with high-quality scaling","A reminder to verify official current rules"]}><h2>Prepare the crop before compression</h2><p>An identity-photo portal may check several things: aspect ratio, pixel dimensions, file format, background, pose and file size. This tool helps with the crop and dimensions. It does not certify that a photo meets the biometric or legal rules of a particular authority.</p><h2>How to make a passport-photo crop</h2><ol><li>Choose a well-lit, front-facing portrait with space around the head.</li><li>Select the ratio requested by the destination.</li><li>Crop and resize, then inspect the framing before downloading.</li></ol><h2>Always verify the destination</h2><p>Photo specifications differ by country, document, submission channel and date. Check the issuing authority’s current instructions for physical measurements, eye line, head height, expression, glasses, clothing and background. After cropping, use a target-size compressor if the portal also gives a KB limit.</p></ToolPage>}
+import { openGraphImage } from "@/lib/seo";
+
+const title = "Passport & Visa Photo Size Tool";
+const description = "Crop US visa, Indian passport, UK passport and Schengen visa photos privately. Apply preset dimensions and editable file-size limits.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: "/passport-photo-size" },
+  openGraph: { title: `${title} | PixSqueeze`, description, url: "/passport-photo-size", images: [openGraphImage] },
+  twitter: { card: "summary_large_image", title: `${title} | PixSqueeze`, description, images: [openGraphImage] },
+};
+
+export default function Page() {
+  return (
+    <ToolPage
+      mode="passport"
+      eyebrow="Country photo presets"
+      title="Prepare a"
+      accent="passport or visa photo"
+      description="Choose a US, Indian, UK or Schengen preset to apply the crop ratio, pixel dimensions and an appropriate file-size target without uploading your portrait."
+      benefits={["US, India, UK and Schengen presets", "Editable target size for portal-specific limits", "Local browser processing with no photo upload"]}
+    >
+      <h2>Choose the preset for your application</h2>
+      <p>The selector configures a centered crop and output size for the selected application. US visa photos use a square 600 × 600px output with a 240KB ceiling. Indian passport, UK printed-photo and Schengen presets use a 35 × 45mm ratio.</p>
+      <h2>File-size rules are not universal</h2>
+      <p>The Indian preset starts at 50KB as a practical working target, but Passport Seva channels can have different requirements. UK and Schengen digital limits vary by submission method or application portal, so those fields are intentionally left open for the value shown by your destination.</p>
+      <h2>How to prepare the photo</h2>
+      <ol>
+        <li>Choose a well-lit, front-facing portrait with room around the head and shoulders.</li>
+        <li>Select the relevant country or visa preset and confirm the target KB value.</li>
+        <li>Crop and resize, then inspect the framing and downloaded file before submitting.</li>
+      </ol>
+      <h2>Verify the issuing authority’s current rules</h2>
+      <p>This tool prepares dimensions, aspect ratio and file weight. It cannot assess background, expression, head position, shadows, eyeglasses or biometric acceptance. Always compare the result with the current instructions on the official application portal.</p>
+    </ToolPage>
+  );
+}

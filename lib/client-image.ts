@@ -137,6 +137,37 @@ export async function transformImage(file: File, options: { width?: number; heig
   return { blob, width: canvas.width, height: canvas.height, quality: options.quality };
 }
 
+export async function cropImageToTarget(file: File, options: { width: number; height: number; targetBytes?: number }): Promise<ProcessResult> {
+  const bitmap = await loadBitmap(file);
+  const canvas = makeCanvas(bitmap, options.width, options.height, true, true);
+  const targetBytes = options.targetBytes;
+
+  if (!targetBytes) {
+    const blob = await canvasBlob(canvas, "image/jpeg", 0.92);
+    bitmap.close();
+    return { blob, width: canvas.width, height: canvas.height, quality: 0.92 };
+  }
+
+  let low = 0.03;
+  let high = 0.96;
+  let best: Blob | null = null;
+  let bestQuality = low;
+  for (let step = 0; step < 12; step++) {
+    const quality = (low + high) / 2;
+    const candidate = await canvasBlob(canvas, "image/jpeg", quality);
+    if (candidate.size <= targetBytes) {
+      best = candidate;
+      bestQuality = quality;
+      low = quality;
+    } else {
+      high = quality;
+    }
+  }
+  bitmap.close();
+  if (!best) throw new Error("This photo cannot meet the selected file-size limit at the required dimensions. Try a cleaner source or verify the portal limit.");
+  return { blob: best, width: canvas.width, height: canvas.height, quality: bestQuality };
+}
+
 export function extensionFor(type: string) {
   if (type.includes("png")) return "png";
   if (type.includes("webp")) return "webp";

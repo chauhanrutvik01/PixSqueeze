@@ -8,7 +8,8 @@ export function Header() {
         <Logo />
         <nav className="hidden items-center gap-7 text-sm font-semibold text-slate-600 md:flex" aria-label="Primary navigation">
           <Link className="transition hover:text-moss" href="/#sizes">Target sizes</Link>
-          <Link className="transition hover:text-moss" href="/resize-image">Tools</Link>
+          <Link className="transition hover:text-moss" href="/#formats">Formats</Link>
+          <Link className="transition hover:text-moss" href="/check">Check size</Link>
           <Link className="transition hover:text-moss" href="/guides">Guides</Link>
           <Link className="transition hover:text-moss" href="/about">About</Link>
         </nav>

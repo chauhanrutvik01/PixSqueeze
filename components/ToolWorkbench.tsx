@@ -18,10 +18,47 @@ const configs = {
 } as const;
 
 const passportPresets = [
-  { name: "Square digital photo", width: 600, height: 600 },
-  { name: "35 × 45 mm ratio", width: 413, height: 531 },
-  { name: "2 × 2 inch ratio", width: 600, height: 600 },
-];
+  {
+    name: "US Visa",
+    dimensions: "2 × 2 in · square",
+    width: 600,
+    height: 600,
+    targetKb: 240,
+    targetLabel: "Maximum 240KB",
+    guide: "Outputs a 600 × 600px JPEG. U.S. visa digital photos allow 600–1200px square images and must be 240KB or smaller.",
+    source: "https://travel.state.gov/content/travel/en/us-visas/visa-information-resources/photos/digital-image-requirements.html",
+  },
+  {
+    name: "Indian Passport",
+    dimensions: "35 × 45 mm",
+    width: 413,
+    height: 531,
+    targetKb: 50,
+    targetLabel: "50KB working target",
+    guide: "Uses the 35 × 45mm print ratio at 300dpi. The 50KB target is common on some portals, not a universal Passport Seva digital limit—verify your application channel.",
+    source: "https://www.passportindia.gov.in/psp/Apply",
+  },
+  {
+    name: "UK Passport",
+    dimensions: "35 × 45 mm",
+    width: 413,
+    height: 531,
+    targetKb: null,
+    targetLabel: "File limit varies by submission method",
+    guide: "Uses the requested 35 × 45mm printed-photo ratio at 300dpi. UK online passport uploads use separate digital-photo rules, so enter the limit shown by your application channel.",
+    source: "https://www.gov.uk/photos-for-passports",
+  },
+  {
+    name: "Schengen Visa",
+    dimensions: "35 × 45 mm",
+    width: 413,
+    height: 531,
+    targetKb: null,
+    targetLabel: "File limit varies by portal",
+    guide: "Uses the common 35 × 45mm ratio at 300dpi. Schengen rules require an ICAO-compliant photo, but digital file-size limits vary by country, consulate and application portal.",
+    source: "https://home-affairs.ec.europa.eu/policies/schengen/visa-policy/applying-schengen-visa_en",
+  },
+] as const;
 
 export function ToolWorkbench({ mode }: { mode: Mode }) {
   const config = configs[mode];
@@ -31,6 +68,7 @@ export function ToolWorkbench({ mode }: { mode: Mode }) {
   const [lockRatio, setLockRatio] = useState(true);
   const [ratio, setRatio] = useState(1.5);
   const [passport, setPassport] = useState(0);
+  const [passportTargetKb, setPassportTargetKb] = useState<string>(String(passportPresets[0].targetKb));
   const [busy, setBusy] = useState(false);
   const [pdfBlob, setPdfBlob] = useState<Blob>();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,7 +93,7 @@ export function ToolWorkbench({ mode }: { mode: Mode }) {
     if (!canRun) return;
     setBusy(true); setPdfBlob(undefined);
     try {
-      const { transformImage } = await import("@/lib/client-image");
+      const { cropImageToTarget, transformImage } = await import("@/lib/client-image");
       if (mode === "pdf") {
         const { jsPDF } = await import("jspdf");
         const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
@@ -74,13 +112,18 @@ export function ToolWorkbench({ mode }: { mode: Mode }) {
         const preset = passportPresets[passport];
         for (const item of items) {
           try {
-            const result = await transformImage(item.file, {
-              width: mode === "passport" ? preset.width : mode === "resize" ? width : undefined,
-              height: mode === "passport" ? preset.height : mode === "resize" ? height : undefined,
-              crop: mode === "passport",
-              format: type,
-              quality: type === "image/png" ? undefined : 0.9,
-            });
+            const result = mode === "passport"
+              ? await cropImageToTarget(item.file, {
+                  width: preset.width,
+                  height: preset.height,
+                  targetBytes: Number(passportTargetKb) > 0 ? Number(passportTargetKb) * 1024 : undefined,
+                })
+              : await transformImage(item.file, {
+                  width: mode === "resize" ? width : undefined,
+                  height: mode === "resize" ? height : undefined,
+                  format: type,
+                  quality: type === "image/png" ? undefined : 0.9,
+                });
             const resultUrl = URL.createObjectURL(result.blob);
             setItems((all) => all.map((entry) => entry.id === item.id ? { ...entry, result: result.blob, resultUrl, error: undefined } : entry));
           } catch (error) { setItems((all) => all.map((entry) => entry.id === item.id ? { ...entry, error: error instanceof Error ? error.message : "Processing failed" } : entry)); }
@@ -110,7 +153,29 @@ export function ToolWorkbench({ mode }: { mode: Mode }) {
         {items.length > 0 && <div className="mt-5 space-y-3">{items.map((item) => <div key={item.id} className="flex items-center gap-3 rounded-2xl border border-line bg-white p-3"><img src={item.resultUrl ?? item.url} alt={`Preview of ${item.file.name}`} className={`h-14 w-14 bg-slate-100 ${mode === "passport" ? "object-cover" : "object-contain"} rounded-xl`} /><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold">{item.file.name}</p><p className="mt-1 text-xs text-slate-500">{fmt(item.file.size)}{item.result ? ` → ${fmt(item.result.size)}` : ""}</p>{item.error && <p className="mt-1 text-xs font-semibold text-red-600">{item.error}</p>}</div>{item.result ? <button onClick={() => downloadItem(item)} className="grid h-10 w-10 place-items-center rounded-xl bg-moss text-white" aria-label={`Download ${item.file.name}`}><Download size={18} /></button> : <button onClick={() => remove(item.id)} className="grid h-10 w-10 place-items-center rounded-xl text-slate-400 hover:bg-red-50 hover:text-red-600" aria-label={`Remove ${item.file.name}`}><Trash2 size={18} /></button>}</div>)}</div>}
 
         {mode === "resize" && <div className="mt-6 grid gap-4 rounded-2xl bg-slate-50 p-5 sm:grid-cols-[1fr_auto_1fr]"><label className="text-sm font-bold">Width (px)<input className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3" type="number" min="1" value={width} onChange={(e) => { const value = Number(e.target.value); setWidth(value); if (lockRatio) setHeight(Math.round(value / ratio)); }} /></label><button onClick={() => setLockRatio(!lockRatio)} className={`mt-7 h-11 rounded-xl px-3 text-xs font-bold ${lockRatio ? "bg-mint text-moss" : "bg-white text-slate-500"}`} aria-pressed={lockRatio}>Ratio {lockRatio ? "on" : "off"}</button><label className="text-sm font-bold">Height (px)<input className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3" type="number" min="1" value={height} onChange={(e) => { const value = Number(e.target.value); setHeight(value); if (lockRatio) setWidth(Math.round(value * ratio)); }} /></label></div>}
-        {mode === "passport" && <div className="mt-6 rounded-2xl bg-slate-50 p-5"><label className="text-sm font-bold">Photo ratio preset<select value={passport} onChange={(e) => setPassport(Number(e.target.value))} className="mt-2 block w-full rounded-xl border border-line bg-white px-4 py-3">{passportPresets.map((preset, index) => <option value={index} key={preset.name}>{preset.name} · {preset.width} × {preset.height}px</option>)}</select></label><p className="mt-3 text-xs leading-5 text-slate-500">The image is center-cropped. Official requirements vary—confirm the current dimensions, background, head position and print rules with the issuing authority.</p></div>}
+        {mode === "passport" && <div className="mt-6 rounded-2xl bg-slate-50 p-5">
+          <label className="text-sm font-bold">Country or visa preset
+            <select value={passport} onChange={(e) => { const index = Number(e.target.value); setPassport(index); setPassportTargetKb(passportPresets[index].targetKb === null ? "" : String(passportPresets[index].targetKb)); }} className="mt-2 block w-full rounded-xl border border-line bg-white px-4 py-3">
+              {passportPresets.map((preset, index) => <option value={index} key={preset.name}>{preset.name} · {preset.dimensions}</option>)}
+            </select>
+          </label>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-xl border border-line bg-white px-4 py-3"><p className="text-xs font-bold uppercase tracking-wider text-slate-400">Output dimensions</p><p className="mt-1 font-extrabold">{passportPresets[passport].width} × {passportPresets[passport].height}px</p></div>
+            <label className="rounded-xl border border-line bg-white px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Target file size (KB)
+              <input className="mt-1 block w-full text-base font-extrabold normal-case tracking-normal text-ink outline-none" min="1" placeholder="Portal-specific" type="number" value={passportTargetKb} onChange={(event) => setPassportTargetKb(event.target.value)} />
+            </label>
+          </div>
+          {items[0] && <div className="mt-4 flex items-center gap-4 rounded-xl border border-line bg-white p-4">
+            <div className="relative h-28 shrink-0 overflow-hidden rounded-lg bg-slate-100" style={{ aspectRatio: `${passportPresets[passport].width} / ${passportPresets[passport].height}` }}>
+              <img src={items[0].url} alt={`${passportPresets[passport].name} center-crop preview`} className="h-full w-full object-cover" />
+              <span className="pointer-events-none absolute inset-2 rounded-full border border-dashed border-white/90 shadow-[0_0_0_999px_rgba(15,23,42,.15)]" />
+            </div>
+            <div><p className="text-xs font-bold uppercase tracking-wider text-slate-400">Crop guide</p><p className="mt-1 text-sm font-extrabold">Centered {passportPresets[passport].dimensions}</p><p className="mt-1 text-xs leading-5 text-slate-500">The download uses this center crop. Reposition the source before adding it if the face is not centered.</p></div>
+          </div>}
+          <p className="mt-4 text-sm font-extrabold text-moss">{passportPresets[passport].targetLabel}</p>
+          <p className="mt-2 text-xs leading-5 text-slate-500">{passportPresets[passport].guide} The image is center-cropped; this tool does not certify biometric acceptance.</p>
+          <a className="mt-3 inline-block text-xs font-bold text-moss underline" href={passportPresets[passport].source} rel="noreferrer" target="_blank">Check official guidance</a>
+        </div>}
         {isConvert && <div className="mt-6 rounded-2xl bg-mint/50 p-4 text-sm leading-6 text-moss"><strong>Quality note:</strong> conversion changes the file format, not the original. JPG removes transparency; PNG can be larger; WebP is often the lightest choice for the web.</div>}
         {mode === "pdf" && <div className="mt-6 rounded-2xl bg-mint/50 p-4 text-sm leading-6 text-moss"><strong>Page order:</strong> images appear in the same order shown above, one image per A4 page. Nothing is sent to a server.</div>}
 

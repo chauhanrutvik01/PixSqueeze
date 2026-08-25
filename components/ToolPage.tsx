@@ -3,11 +3,15 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { ToolWorkbench } from "./ToolWorkbench";
 import { AdSlot } from "./AdSlot";
 import { ToolLinks } from "./ToolLinks";
+import { site } from "@/lib/site";
 
 type Mode = "resize" | "passport" | "jpg" | "png" | "webp" | "pdf";
 
 export function ToolPage({ mode, eyebrow, title, accent, description, benefits, children }: { mode: Mode; eyebrow: string; title: string; accent: string; description: string; benefits: string[]; children: React.ReactNode }) {
+  const paths: Record<Mode, string> = { resize: "/resize-image", passport: "/passport-photo-size", jpg: "/convert-to-jpg", png: "/convert-to-png", webp: "/convert-to-webp", pdf: "/image-to-pdf" };
+  const webAppSchema = { "@context":"https://schema.org", "@type":"WebApplication", name:`${title} ${accent}`, url:`${site.url}${paths[mode]}`, description, applicationCategory:"MultimediaApplication", operatingSystem:"Any modern web browser", offers:{"@type":"Offer",price:"0",priceCurrency:"USD"} };
   return <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppSchema).replace(/</g, "\\u003c") }} />
     <section className="container-shell pb-10 pt-14 text-center sm:pt-20"><p className="eyebrow">{eyebrow}</p><h1 className="display mx-auto mt-4 max-w-4xl text-4xl leading-tight sm:text-6xl">{title} <span className="text-moss">{accent}</span></h1><p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">{description}</p></section>
     <div className="container-shell"><ToolWorkbench mode={mode} /></div>
     <div className="container-shell mt-10"><AdSlot /></div>

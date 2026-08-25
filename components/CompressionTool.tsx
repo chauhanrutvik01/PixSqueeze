@@ -3,6 +3,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowDown, Check, Download, ImageIcon, LockKeyhole, Plus, Sparkles, Trash2, UploadCloud, X } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 type Item = {
   id: string;
@@ -58,6 +59,7 @@ export function CompressionTool({ presetKb = 100, heading }: { presetKb?: number
   const compressAll = async () => {
     if (!items.length || target <= 0) return;
     setBusy(true);
+    trackEvent("compression_started", { batch_size: items.length, target_size: target, target_unit: unit });
     const targetBytes = target * (unit === "KB" ? 1024 : 1024 * 1024);
     const { compressToTarget } = await import("@/lib/client-image");
     for (const item of items) {
@@ -71,6 +73,7 @@ export function CompressionTool({ presetKb = 100, heading }: { presetKb?: number
       }
     }
     setBusy(false);
+    trackEvent("compression_completed", { batch_size: items.length, target_size: target, target_unit: unit });
   };
 
   const downloadAs = async (format: OutputChoice) => {
@@ -85,6 +88,7 @@ export function CompressionTool({ presetKb = 100, heading }: { presetKb?: number
         : (await compressToTarget(downloadItem.file, targetBytes, undefined, mimeType)).blob;
       const stem = downloadItem.file.name.replace(/\.[^.]+$/, "");
       saveBlob(blob, `${stem}-pixsqueeze.${format}`);
+      trackEvent("compressed_image_downloaded", { output_format: format, target_size: target, target_unit: unit });
       setDownloadItem(null);
     } catch (error) {
       setDownloadError(error instanceof Error ? error.message : "This format could not be prepared.");
@@ -152,9 +156,12 @@ export function CompressionTool({ presetKb = 100, heading }: { presetKb?: number
               <select value={unit} onChange={(e) => setUnit(e.target.value as "KB" | "MB")} className="border-l border-line bg-white px-4 font-bold text-ink outline-none" aria-label="File size unit"><option>KB</option><option>MB</option></select>
             </span>
           </label>
-          <button disabled={!items.length || busy || target <= 0} onClick={compressAll} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-coral px-7 py-3.5 font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto">
-            {busy ? <><Sparkles className="animate-pulse" size={18} /> Squeezing…</> : items.every((item) => item.status === "done") && items.length ? <><Check size={18} /> Compress again</> : <><ImageIcon size={18} /> Compress images</>}
-          </button>
+          <div className="flex flex-col items-stretch gap-2 md:items-center">
+            <button disabled={!items.length || busy || target <= 0} onClick={compressAll} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-coral px-7 py-3.5 font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto">
+              {busy ? <><Sparkles className="animate-pulse" size={18} /> Squeezing…</> : items.every((item) => item.status === "done") && items.length ? <><Check size={18} /> Compress again</> : <><ImageIcon size={18} /> Compress images</>}
+            </button>
+            <span className="inline-flex items-center justify-center gap-1.5 text-center text-[11px] font-bold text-mint"><LockKeyhole size={13} /> Processed locally · never uploaded</span>
+          </div>
         </div>
       </div>
     </section>
